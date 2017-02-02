@@ -87,7 +87,7 @@ function flowerpot.register_node(nodename)
 		},
 		selection_box = {
 			type = "fixed",
-			fixed = {-1/4, -1/2, -1/4, 1/4, 1/2, 1/4},
+			fixed = {-1/4, -1/2, -1/4, 1/4, 7/16, 1/4},
 		},
 		sounds = default.node_sound_defaults(),
 		groups = {oddly_breakable_by_hand = 1, snappy = 3, not_in_creative_inventory = 1},
@@ -113,7 +113,7 @@ minetest.register_node("flowerpot:empty", {
 	},
 	selection_box = {
 		type = "fixed",
-		fixed = {-1/4, -1/2, -1/4, 1/4, 1/2, 1/4},
+		fixed = {-1/4, -1/2, -1/4, 1/4, -1/16, 1/4},
 	},
 	sounds = default.node_sound_defaults(),
 	groups = {oddly_breakable_by_hand = 3, cracky = 1},
