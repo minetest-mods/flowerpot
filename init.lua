@@ -116,7 +116,7 @@ minetest.register_node("flowerpot:empty", {
 		fixed = {-1/4, -1/2, -1/4, 1/4, -1/16, 1/4},
 	},
 	sounds = default.node_sound_defaults(),
-	groups = {oddly_breakable_by_hand = 3, cracky = 1},
+	groups = {oddly_breakable_by_hand = 3, cracky = 1, dig_immediate = 3},
 	on_rightclick = flowerpot_on_rightclick,
 })
 
