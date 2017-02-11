@@ -46,6 +46,10 @@ local function flowerpot_on_rightclick(pos, node, clicker, itemstack, pointed_th
 		return false
 	end
 
+	if nodename:match("grass_1") then
+		nodename = nodename:gsub("grass_1", "grass_" .. math.random(5))
+	end
+
 	local name = "flowerpot:" .. nodename:gsub(":", "_")
 	local def = minetest.registered_nodes[name]
 	if not def then
@@ -90,6 +94,8 @@ function flowerpot.register_node(nodename)
 		}
 	end
 
+	local dropname = nodename:gsub("grass_%d", "grass_1")
+
 	minetest.register_node("flowerpot:" .. name, {
 		description = "Flowerpot with " .. desc,
 		drawtype = "mesh",
@@ -111,13 +117,13 @@ function flowerpot.register_node(nodename)
 		on_dig = function(pos, node, digger)
 			minetest.set_node(pos, {name = "flowerpot:empty"})
 			local def = minetest.registered_nodes[node.name]
-			minetest.add_item(pos, nodename)
+			minetest.add_item(pos, dropname)
 		end,
 		drop = {
 			max_items = 2,
 			items = {
 				{
-					items = {"flowerpot:empty", nodename},
+					items = {"flowerpot:empty", dropname},
 					rarity = 1,
 				},
 			}
