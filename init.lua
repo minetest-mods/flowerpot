@@ -131,6 +131,7 @@ minetest.register_node("flowerpot:empty", {
 	drawtype = "mesh",
 	mesh = "flowerpot.obj",
 	inventory_image = "flowerpot_item.png",
+	wield_image = "flowerpot_item.png",
 	tiles = {
 		{name = "flowerpot.png"},
 		{name = "doors_blank.png"},
