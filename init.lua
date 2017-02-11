@@ -49,7 +49,7 @@ local function flowerpot_on_rightclick(pos, node, clicker, itemstack, pointed_th
 	local name = "flowerpot:" .. nodename:gsub(":", "_")
 	local def = minetest.registered_nodes[name]
 	if not def then
-		return false
+		return itemstack
 	end
 	minetest.sound_play(def.sounds.place, {pos = pos})
 	minetest.swap_node(pos, {name = name})
