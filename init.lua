@@ -106,9 +106,22 @@ function flowerpot.register_node(nodename)
 			fixed = {-1/4, -1/2, -1/4, 1/4, 7/16, 1/4},
 		},
 		sounds = default.node_sound_defaults(),
-		groups = {oddly_breakable_by_hand = 1, snappy = 3, not_in_creative_inventory = 1},
+		groups = {attached_node = 1, oddly_breakable_by_hand = 1, snappy = 3, not_in_creative_inventory = 1},
 		flowerpot_plantname = nodename,
-		on_punch = flowerpot_on_punch,
+		on_dig = function(pos, node, digger)
+			minetest.set_node(pos, {name = "flowerpot:empty"})
+			local def = minetest.registered_nodes[node.name]
+			minetest.add_item(pos, nodename)
+		end,
+		drop = {
+			max_items = 2,
+			items = {
+				{
+					items = {"flowerpot:empty", nodename},
+					rarity = 1,
+				},
+			}
+		},
 	})
 end
 
@@ -134,7 +147,7 @@ minetest.register_node("flowerpot:empty", {
 		fixed = {-1/4, -1/2, -1/4, 1/4, -1/16, 1/4},
 	},
 	sounds = default.node_sound_defaults(),
-	groups = {oddly_breakable_by_hand = 3, cracky = 1, dig_immediate = 3},
+	groups = {attached_node = 1, oddly_breakable_by_hand = 3, cracky = 1, dig_immediate = 3},
 	on_rightclick = flowerpot_on_rightclick,
 })
 
