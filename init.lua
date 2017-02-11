@@ -59,6 +59,14 @@ local function flowerpot_on_rightclick(pos, node, clicker, itemstack, pointed_th
 	return itemstack
 end
 
+local function get_tile(def)
+	local tile = def.tiles[1]
+	if type (tile) == "table" then
+		return tile.name
+	end
+	return tile
+end
+
 function flowerpot.register_node(nodename)
 	assert(nodename, "no nodename passed")
 	local nodedef = minetest.registered_nodes[nodename]
@@ -66,19 +74,27 @@ function flowerpot.register_node(nodename)
 
 	local desc = nodedef.description
 	local name = nodedef.name:gsub(":", "_")
-	local tile = nodedef.tiles[1]
-	if type(tile) == "table" then
-		tile = tile.name
+	local tiles = {}
+
+	if nodedef.drawtype == "plantlike" then
+		tiles = {
+			{name = "flowerpot.png"},
+			{name = get_tile(nodedef)},
+			{name = "doors_blank.png"},
+		}
+	else
+		tiles = {
+			{name = "flowerpot.png"},
+			{name = "doors_blank.png"},
+			{name = get_tile(nodedef)},
+		}
 	end
 
 	minetest.register_node("flowerpot:" .. name, {
 		description = "Flowerpot with " .. desc,
 		drawtype = "mesh",
 		mesh = "flowerpot.obj",
-		tiles = {
-			{name = "flowerpot.png"},
-			{name = tile},
-		},
+		tiles = tiles,
 		paramtype = "light",
 		sunlight_propagates = true,
 		collision_box = {
@@ -103,6 +119,7 @@ minetest.register_node("flowerpot:empty", {
 	mesh = "flowerpot.obj",
 	tiles = {
 		{name = "flowerpot.png"},
+		{name = "doors_blank.png"},
 		{name = "doors_blank.png"},
 	},
 	paramtype = "light",
@@ -151,6 +168,7 @@ for _, node in pairs({
 	"default:bush_stem",
 	"default:acacia_bush_stem",
 	"default:papyrus",
+	"default:cactus",
 	"flowers:rose",
 	"flowers:tulip",
 	"flowers:dandelion_yellow",
