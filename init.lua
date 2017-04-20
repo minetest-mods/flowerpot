@@ -74,7 +74,10 @@ end
 function flowerpot.register_node(nodename)
 	assert(nodename, "no nodename passed")
 	local nodedef = minetest.registered_nodes[nodename]
-	assert(nodedef, nodename .. " is not a known node")
+	if not nodedef then
+		minetest.log("error", nodename .. " is not a known node, unable to register flowerpot")
+		return false
+	end
 
 	local desc = nodedef.description
 	local name = nodedef.name:gsub(":", "_")
