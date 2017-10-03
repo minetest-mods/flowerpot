@@ -57,7 +57,7 @@ local function flowerpot_on_rightclick(pos, node, clicker, itemstack, pointed_th
 	end
 	minetest.sound_play(def.sounds.place, {pos = pos})
 	minetest.swap_node(pos, {name = name})
-	if not minetest.setting_getbool("creative_mode") then
+	if not minetest.settings:get_bool("creative_mode") then
 		itemstack:take_item()
 	end
 	return itemstack
