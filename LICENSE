@@ -1,4 +1,3 @@
-
 flowerpot - a minetest mod that adds a stylish flowerpot
 
 See spdx.org/licenses to see what the License Identifiers used below mean.
@@ -7,6 +6,7 @@ See spdx.org/licenses to see what the License Identifiers used below mean.
 
 All source code (lua):
 	(C) Auke Kok <sofar@foo-projects.org>
+	(C) MultiCraft Development Team
 	LGPL-2.1+
 
 All models:

@@ -1,4 +1,3 @@
-
 flowerpot
 =========
 
@@ -31,4 +30,3 @@ texturing of the flowerpot model.
 
 The flowerpot mod has an API that can be used by other mods to create
 new plant-flowerpot combinations. See api.md for usage information.
-
