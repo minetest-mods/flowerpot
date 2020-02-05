@@ -12,6 +12,9 @@
 
 flowerpot = {}
 
+-- Translation
+local S = minetest.get_translator("flowerpot")
+
 -- handle plant removal from flowerpot
 local function flowerpot_on_punch(pos, node, puncher, pointed_thing)
 	if puncher and not minetest.check_player_privs(puncher, "protection_bypass") then
@@ -75,7 +78,7 @@ function flowerpot.register_node(nodename)
 	assert(nodename, "no nodename passed")
 	local nodedef = minetest.registered_nodes[nodename]
 	if not nodedef then
-		minetest.log("error", nodename .. " is not a known node, unable to register flowerpot")
+		minetest.log("error", S("@1 is not a known node, unable to register flowerpot", nodename))
 		return false
 	end
 
@@ -100,7 +103,7 @@ function flowerpot.register_node(nodename)
 	local dropname = nodename:gsub("grass_%d", "grass_1")
 
 	minetest.register_node("flowerpot:" .. name, {
-		description = "Flowerpot with " .. desc,
+		description = S("Flowerpot with @1", desc),
 		drawtype = "mesh",
 		mesh = "flowerpot.obj",
 		tiles = tiles,
@@ -136,7 +139,7 @@ end
 
 -- empty flowerpot
 minetest.register_node("flowerpot:empty", {
-	description = "Flowerpot",
+	description = S("Flowerpot"),
 	drawtype = "mesh",
 	mesh = "flowerpot.obj",
 	inventory_image = "flowerpot_item.png",
