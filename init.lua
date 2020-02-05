@@ -170,8 +170,8 @@ minetest.register_craft({
 	}
 })
 
--- default farming nodes
 for _, node in pairs({
+	-- default nodes
 	"default:acacia_bush_sapling",
 	"default:acacia_bush_stem",
 	"default:acacia_sapling",
@@ -203,6 +203,7 @@ for _, node in pairs({
 	"default:fern_1",
 	"default:fern_2",
 	"default:fern_3",
+	-- farming nodes
 	"farming:cotton_1",
 	"farming:cotton_2",
 	"farming:cotton_3",
@@ -219,6 +220,7 @@ for _, node in pairs({
 	"farming:wheat_6",
 	"farming:wheat_7",
 	"farming:wheat_8",
+	-- flowers nodes
 	"flowers:dandelion_white",
 	"flowers:dandelion_yellow",
 	"flowers:geranium",
@@ -229,6 +231,7 @@ for _, node in pairs({
 	"flowers:viola",
 	"flowers:chrysanthemum_green",
 	"flowers:tulip_black",
+	-- moretrees nodes
 	"moretrees:beech_sapling",
 	"moretrees:apple_tree_sapling",
 	"moretrees:oak_sapling",
@@ -257,6 +260,7 @@ for _, node in pairs({
 	"moretrees:rubber_tree_sapling_ongen",
 	"moretrees:fir_sapling_ongen",
 	"moretrees:jungletree_sapling_ongen",
+	-- dryplants nodes
 	"dryplants:grass",
 	"dryplants:grass_short",
 	"dryplants:hay",
@@ -270,10 +274,13 @@ for _, node in pairs({
 	"dryplants:reedmace",
 	"dryplants:reedmace_bottom",
 	"dryplants:reedmace_sapling",
+	-- poisonivy nodes
 	"poisonivy:seedling",
 	"poisonivy:sproutling",
 	"poisonivy:climbing",
 
 }) do
-	flowerpot.register_node(node)
+	if minetest.registered_nodes[node] then
+		flowerpot.register_node(node)
+	end
 end
