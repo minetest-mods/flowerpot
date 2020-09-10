@@ -179,6 +179,8 @@ for _, node in pairs({
 	"default:acacia_bush_stem",
 	"default:acacia_sapling",
 	"default:aspen_sapling",
+	"default:blueberry_bush_sapling",
+	"default:pine_bush_sapling",
 	"default:bush_sapling",
 	"default:bush_stem",
 	"default:cactus",
