@@ -90,12 +90,12 @@ function flowerpot.register_node(nodename)
 		tiles = {
 			{name = "flowerpot.png"},
 			{name = get_tile(nodedef)},
-			{name = "doors_blank.png"},
+			{name = "blank.png"},
 		}
 	else
 		tiles = {
 			{name = "flowerpot.png"},
-			{name = "doors_blank.png"},
+			{name = "blank.png"},
 			{name = get_tile(nodedef)},
 		}
 	end
@@ -146,8 +146,8 @@ minetest.register_node("flowerpot:empty", {
 	wield_image = "flowerpot_item.png",
 	tiles = {
 		{name = "flowerpot.png"},
-		{name = "doors_blank.png"},
-		{name = "doors_blank.png"},
+		{name = "blank.png"},
+		{name = "blank.png"},
 	},
 	paramtype = "light",
 	sunlight_propagates = true,
