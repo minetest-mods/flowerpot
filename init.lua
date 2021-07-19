@@ -102,7 +102,7 @@ function flowerpot.register_node(nodename)
 
 	local dropname = nodename:gsub("grass_%d", "grass_1")
 
-	minetest.register_node("flowerpot:" .. name, {
+	minetest.register_node(":flowerpot:" .. name, {
 		description = S("Flowerpot with @1", desc),
 		drawtype = "mesh",
 		mesh = "flowerpot.obj",
