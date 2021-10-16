@@ -109,7 +109,7 @@ function flowerpot.register_node(nodename)
 		tiles = tiles,
 		paramtype = "light",
 		sunlight_propagates = true,
-		use_texture_alpha = "clip",
+		use_texture_alpha = minetest.features.use_texture_alpha_string_modes and "clip" or true,
 		collision_box = {
 			type = "fixed",
 			fixed = {-1/4, -1/2, -1/4, 1/4, -1/8, 1/4},
@@ -152,7 +152,7 @@ minetest.register_node("flowerpot:empty", {
 	},
 	paramtype = "light",
 	sunlight_propagates = true,
-	use_texture_alpha = "clip",
+	use_texture_alpha = minetest.features.use_texture_alpha_string_modes and "clip" or true,
 	collision_box = {
 		type = "fixed",
 		fixed = {-1/4, -1/2, -1/4, 1/4, -1/8, 1/4},
