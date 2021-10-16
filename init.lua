@@ -84,7 +84,7 @@ function flowerpot.register_node(nodename)
 
 	local desc = nodedef.description
 	local name = nodedef.name:gsub(":", "_")
-	local tiles = {}
+	local tiles
 
 	if nodedef.drawtype == "plantlike" then
 		tiles = {
@@ -109,6 +109,7 @@ function flowerpot.register_node(nodename)
 		tiles = tiles,
 		paramtype = "light",
 		sunlight_propagates = true,
+		use_texture_alpha = minetest.features.use_texture_alpha_string_modes and "clip" or true,
 		collision_box = {
 			type = "fixed",
 			fixed = {-1/4, -1/2, -1/4, 1/4, -1/8, 1/4},
@@ -151,6 +152,7 @@ minetest.register_node("flowerpot:empty", {
 	},
 	paramtype = "light",
 	sunlight_propagates = true,
+	use_texture_alpha = minetest.features.use_texture_alpha_string_modes and "clip" or true,
 	collision_box = {
 		type = "fixed",
 		fixed = {-1/4, -1/2, -1/4, 1/4, -1/8, 1/4},
