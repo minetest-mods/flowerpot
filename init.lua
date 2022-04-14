@@ -15,38 +15,19 @@ flowerpot = {}
 -- Translation
 local S = minetest.get_translator("flowerpot")
 
--- handle plant removal from flowerpot
-local function flowerpot_on_punch(pos, node, puncher, pointed_thing)
-	if puncher and not minetest.check_player_privs(puncher, "protection_bypass") then
-		local name = puncher:get_player_name()
-		if minetest.is_protected(pos, name) then
-			minetest.record_protection_violation(pos, name)
-			return false
-		end
-	end
-
-	local nodedef = minetest.registered_nodes[node.name]
-	local plant = nodedef.flowerpot_plantname
-	assert(plant, "unknown plant in flowerpot: " .. node.name)
-
-	minetest.sound_play(nodedef.sounds.dug, {pos = pos})
-	minetest.handle_node_drops(pos, {plant}, puncher)
-	minetest.swap_node(pos, {name = "flowerpot:empty"})
-end
-
 -- handle plant insertion into flowerpot
 local function flowerpot_on_rightclick(pos, node, clicker, itemstack, pointed_thing)
 	if clicker and not minetest.check_player_privs(clicker, "protection_bypass") then
 		local name = clicker:get_player_name()
 		if minetest.is_protected(pos, name) then
 			minetest.record_protection_violation(pos, name)
-			return false
+			return itemstack
 		end
 	end
 
 	local nodename = itemstack:get_name()
 	if not nodename then
-		return false
+		return itemstack
 	end
 
 	if nodename:match("grass_1") then
