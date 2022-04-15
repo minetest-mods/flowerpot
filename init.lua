@@ -26,9 +26,6 @@ local function flowerpot_on_rightclick(pos, node, clicker, itemstack, pointed_th
 	end
 
 	local nodename = itemstack:get_name()
-	if not nodename then
-		return itemstack
-	end
 
 	if nodename:match("grass_1") then
 		nodename = nodename:gsub("grass_1", "grass_" .. math.random(5))
