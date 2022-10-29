@@ -17,27 +17,25 @@ local S = minetest.get_translator("flowerpot")
 
 -- handle plant insertion into flowerpot
 local function flowerpot_on_rightclick(pos, node, clicker, itemstack, pointed_thing)
-	if clicker and not minetest.check_player_privs(clicker, "protection_bypass") then
-		local name = clicker:get_player_name()
-		if minetest.is_protected(pos, name) then
-			minetest.record_protection_violation(pos, name)
-			return itemstack
-		end
+	if not minetest.is_player(clicker) then
+		return itemstack
 	end
 
-	local nodename = itemstack:get_name()
+	local player_name = clicker:get_player_name()
 
-	if nodename:match("grass_1") then
-		nodename = nodename:gsub("grass_1", "grass_" .. math.random(5))
+	if minetest.is_protected(pos, player_name) and not minetest.check_player_privs(clicker, "protection_bypass") then
+		return itemstack
 	end
 
-	local name = "flowerpot:" .. nodename:gsub(":", "_")
-	local def = minetest.registered_nodes[name]
+	local item_name = itemstack:get_name()
+
+	local pot_name = "flowerpot:" .. item_name:gsub(":", "_")
+	local def = minetest.registered_nodes[pot_name]
 	if not def then
 		return itemstack
 	end
 	minetest.sound_play(def.sounds.place, {pos = pos})
-	minetest.swap_node(pos, {name = name})
+	minetest.swap_node(pos, {name = pot_name})
 	if not minetest.settings:get_bool("creative_mode") then
 		itemstack:take_item()
 	end
@@ -55,6 +53,7 @@ end
 function flowerpot.register_node(nodename)
 	assert(nodename, "no nodename passed")
 	local nodedef = minetest.registered_nodes[nodename]
+
 	if not nodedef then
 		minetest.log("error", S("@1 is not a known node, unable to register flowerpot", nodename))
 		return false
@@ -78,8 +77,6 @@ function flowerpot.register_node(nodename)
 		}
 	end
 
-	local dropname = nodename:gsub("grass_%d", "grass_1")
-
 	minetest.register_node(":flowerpot:" .. name, {
 		description = S("Flowerpot with @1", desc),
 		drawtype = "mesh",
@@ -99,20 +96,17 @@ function flowerpot.register_node(nodename)
 		sounds = default.node_sound_defaults(),
 		groups = {attached_node = 1, oddly_breakable_by_hand = 1, snappy = 3, not_in_creative_inventory = 1},
 		flowerpot_plantname = nodename,
+		node_dig_prediction = "flowerpot:empty",
 		on_dig = function(pos, node, digger)
-			minetest.set_node(pos, {name = "flowerpot:empty"})
-			local def = minetest.registered_nodes[node.name]
-			minetest.add_item(pos, dropname)
+			minetest.swap_node(pos, {name = "flowerpot:empty"})
+			local inv = digger:get_inventory()
+			for _, drop in ipairs(minetest.get_node_drops(nodename)) do
+				local remainder = inv:add_item("main", drop)
+				if not remainder:is_empty() then
+					minetest.add_item(pos, remainder)
+				end
+			end
 		end,
-		drop = {
-			max_items = 2,
-			items = {
-				{
-					items = {"flowerpot:empty", dropname},
-					rarity = 1,
-				},
-			}
-		},
 	})
 end
 
