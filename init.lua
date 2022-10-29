@@ -99,13 +99,8 @@ function flowerpot.register_node(nodename)
 		node_dig_prediction = "flowerpot:empty",
 		on_dig = function(pos, node, digger)
 			minetest.swap_node(pos, {name = "flowerpot:empty"})
-			local inv = digger:get_inventory()
-			for _, drop in ipairs(minetest.get_node_drops(nodename)) do
-				local remainder = inv:add_item("main", drop)
-				if not remainder:is_empty() then
-					minetest.add_item(pos, remainder)
-				end
-			end
+			local drops = minetest.get_node_drops(nodename) -- don't cache, can be overriden
+			minetest.handle_node_drops(pos, drops, digger)
 		end,
 	})
 end
