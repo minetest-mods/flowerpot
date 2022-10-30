@@ -23,7 +23,7 @@ local function flowerpot_on_rightclick(pos, node, clicker, itemstack, pointed_th
 
 	local player_name = clicker:get_player_name()
 
-	if minetest.is_protected(pos, player_name) and not minetest.check_player_privs(clicker, "protection_bypass") then
+	if minetest.is_protected(pos, player_name) then
 		return itemstack
 	end
 
