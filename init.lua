@@ -98,6 +98,9 @@ function flowerpot.register_node(nodename)
 		flowerpot_plantname = nodename,
 		node_dig_prediction = "flowerpot:empty",
 		on_dig = function(pos, node, digger)
+			if (not minetest.is_player(digger)) or minetest.is_protected(pos, digger:get_player_name()) then
+				return
+			end
 			minetest.swap_node(pos, {name = "flowerpot:empty"})
 			local drops = minetest.get_node_drops(nodename) -- don't cache, can be overriden
 			minetest.handle_node_drops(pos, drops, digger)
