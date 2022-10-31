@@ -12,6 +12,8 @@
 
 flowerpot = {}
 
+local f = string.format
+
 -- Translation
 local S = minetest.get_translator("flowerpot")
 
@@ -55,8 +57,7 @@ function flowerpot.register_node(nodename)
 	local nodedef = minetest.registered_nodes[nodename]
 
 	if not nodedef then
-		minetest.log("error", S("@1 is not a known node, unable to register flowerpot", nodename))
-		return false
+		error(f("%s is not a known node, unable to register flowerpot", nodename))
 	end
 
 	local desc = nodedef.description
@@ -98,12 +99,53 @@ function flowerpot.register_node(nodename)
 		flowerpot_plantname = nodename,
 		node_dig_prediction = "flowerpot:empty",
 		on_dig = function(pos, node, digger)
-			if (not minetest.is_player(digger)) or minetest.is_protected(pos, digger:get_player_name()) then
+			local digger_name = digger:get_player_name()
+
+			if (not minetest.is_player(digger)) or minetest.is_protected(pos, digger_name) then
+				minetest.record_protection_violation(pos, digger_name)
 				return
 			end
-			minetest.swap_node(pos, {name = "flowerpot:empty"})
-			local drops = minetest.get_node_drops(nodename) -- don't cache, can be overriden
+
+			minetest.log("action", f("%s digs %s at %s", digger_name, nodename, minetest.pos_to_string(pos)))
+
+			local wielded = digger:get_wielded_item()
+			local wielded_def = wielded:get_definition()
+			local toolcaps = wielded:get_tool_capabilities()
+			local node_def = minetest.registered_nodes[node.name]
+			local dig_params = minetest.get_dig_params((node_def or {}).groups, toolcaps, wielded:get_wear())
+
+			if wielded_def and wielded_def.after_use then
+				wielded = wielded_def.after_use(wielded, digger, node, dig_params) or wielded
+
+			else
+				if not minetest.is_creative_enabled(digger_name) then
+					wielded:add_wear(dig_params.wear)
+					if wielded:get_count() == 0 and wielded_def.sound and wielded_def.sound.breaks then
+						minetest.sound_play(wielded_def.sound.breaks, {pos = pos, gain = 0.5}, true)
+					end
+				end
+			end
+
+			digger:set_wielded_item(wielded)
+
+			-- intentionally ignore the preserve_metadata callbacks
+
+			local drops = minetest.get_node_drops(nodename, wielded:get_name())
 			minetest.handle_node_drops(pos, drops, digger)
+
+			minetest.swap_node(pos, {name = "flowerpot:empty"})
+
+			for _, callback in ipairs(minetest.registered_on_dignodes) do
+				local origin = minetest.callback_origins[callback]
+				minetest.set_last_run_mod(origin.mod)
+
+				-- Copy pos and node because callback can modify them
+				local pos_copy = vector.copy(pos)
+				local node_copy = {name = node.name, param1 = node.param1, param2 = node.param2}
+				callback(pos_copy, node_copy, digger)
+			end
+
+			return true
 		end,
 	})
 end
