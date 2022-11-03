@@ -17,6 +17,8 @@ local f = string.format
 -- Translation
 local S = minetest.get_translator("flowerpot")
 
+local flower_items_by_pot = {}
+
 -- handle plant insertion into flowerpot
 local function flowerpot_on_rightclick(pos, node, clicker, itemstack, pointed_thing)
 	if not minetest.is_player(clicker) then
@@ -52,6 +54,27 @@ local function get_tile(def)
 	return tile
 end
 
+local old_get_node_drops = minetest.get_node_drops
+
+function minetest.get_node_drops(node, toolname)
+	local node_name
+	if type(node) == "table" then
+		node_name = node.name
+
+	elseif type(node) == "string" then
+		node_name = node
+	end
+
+	if node_name then
+		local flower_item = flower_items_by_pot[node_name]
+		if flower_item then
+			return old_get_node_drops(flower_item, toolname)
+		end
+	end
+
+	return old_get_node_drops(node, toolname)
+end
+
 function flowerpot.register_node(nodename)
 	assert(nodename, "no nodename passed")
 	local nodedef = minetest.registered_nodes[nodename]
@@ -78,6 +101,8 @@ function flowerpot.register_node(nodename)
 		}
 	end
 
+	flower_items_by_pot["flowerpot:" .. name] = nodename
+
 	minetest.register_node(":flowerpot:" .. name, {
 		description = S("Flowerpot with @1", desc),
 		drawtype = "mesh",
@@ -98,54 +123,8 @@ function flowerpot.register_node(nodename)
 		groups = {attached_node = 1, oddly_breakable_by_hand = 1, snappy = 3, not_in_creative_inventory = 1},
 		flowerpot_plantname = nodename,
 		node_dig_prediction = "flowerpot:empty",
-		on_dig = function(pos, node, digger)
-			local digger_name = digger:get_player_name()
-
-			if (not minetest.is_player(digger)) or minetest.is_protected(pos, digger_name) then
-				minetest.record_protection_violation(pos, digger_name)
-				return
-			end
-
-			minetest.log("action", f("%s digs %s at %s", digger_name, nodename, minetest.pos_to_string(pos)))
-
-			local wielded = digger:get_wielded_item()
-			local wielded_def = wielded:get_definition()
-			local toolcaps = wielded:get_tool_capabilities()
-			local node_def = minetest.registered_nodes[node.name]
-			local dig_params = minetest.get_dig_params((node_def or {}).groups, toolcaps, wielded:get_wear())
-
-			if wielded_def and wielded_def.after_use then
-				wielded = wielded_def.after_use(wielded, digger, node, dig_params) or wielded
-
-			else
-				if not minetest.is_creative_enabled(digger_name) then
-					wielded:add_wear(dig_params.wear)
-					if wielded:get_count() == 0 and wielded_def.sound and wielded_def.sound.breaks then
-						minetest.sound_play(wielded_def.sound.breaks, {pos = pos, gain = 0.5}, true)
-					end
-				end
-			end
-
-			digger:set_wielded_item(wielded)
-
-			-- intentionally ignore the preserve_metadata callbacks
-
-			local drops = minetest.get_node_drops(nodename, wielded:get_name())
-			minetest.handle_node_drops(pos, drops, digger)
-
+		after_dig_node = function(pos, oldnode, oldmetadata, digger)
 			minetest.swap_node(pos, {name = "flowerpot:empty"})
-
-			for _, callback in ipairs(minetest.registered_on_dignodes) do
-				local origin = minetest.callback_origins[callback]
-				minetest.set_last_run_mod(origin.mod)
-
-				-- Copy pos and node because callback can modify them
-				local pos_copy = vector.copy(pos)
-				local node_copy = {name = node.name, param1 = node.param1, param2 = node.param2}
-				callback(pos_copy, node_copy, digger)
-			end
-
-			return true
 		end,
 	})
 end
