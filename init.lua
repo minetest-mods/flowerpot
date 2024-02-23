@@ -68,7 +68,13 @@ function minetest.get_node_drops(node, toolname)
 	if node_name then
 		local flower_item = flower_items_by_pot[node_name]
 		if flower_item then
-			return old_get_node_drops(flower_item, toolname)
+			local drops = old_get_node_drops(flower_item, toolname)
+			if drops then
+				table.insert(drops, "flowerpot:empty")
+				return drops
+			else
+				return { "flowerpot:empty" }
+			end
 		end
 	end
 
@@ -123,7 +129,18 @@ function flowerpot.register_node(nodename)
 		groups = {attached_node = 1, oddly_breakable_by_hand = 1, snappy = 3, not_in_creative_inventory = 1},
 		flowerpot_plantname = nodename,
 		node_dig_prediction = "flowerpot:empty",
-		after_dig_node = function(pos, oldnode, oldmetadata, digger)
+		on_punch = function(pos, node, puncher, pointed_thing)
+			if not (puncher and puncher:is_player()) then
+				return
+			end
+			local toolname = puncher:get_wielded_item()
+			if node.name then
+				local flower_item = flower_items_by_pot[node.name]
+				if flower_item then
+					local drops = old_get_node_drops(flower_item, toolname)
+					minetest.handle_node_drops(pos, drops, puncher)
+				end
+			end
 			minetest.swap_node(pos, {name = "flowerpot:empty"})
 		end,
 	})
