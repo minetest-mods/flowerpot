@@ -133,6 +133,9 @@ function flowerpot.register_node(nodename)
 			if not (puncher and puncher:is_player()) then
 				return
 			end
+			if minetest.is_protected(pos, puncher:get_player_name()) then
+				return
+			end
 			local toolname = puncher:get_wielded_item()
 			if node.name then
 				local flower_item = flower_items_by_pot[node.name]
